@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
 
             MyLocalBinder myBinder = (MyLocalBinder) service;
             myService = myBinder.getService();
-            Log.i(TAG,"service connection done");
+            Log.i(TAG, "service connection done");
             isBound = true;
 
         }
@@ -32,36 +32,32 @@ public class MainActivity extends Activity {
         public void onServiceDisconnected(ComponentName name) {
             isBound = false;
             myService = null;
-            Log.i(TAG,"Service Disconnected");
+            Log.i(TAG, "Service Disconnected");
 
         }
     };
 
 
-
-
-    private  boolean isBound = false;
+    private boolean isBound = false;
     MyService myService;
-    private static final String TAG ="myTAG";
+    private static final String TAG = "myTAG";
     public TextView myTextview;
-
-
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myTextview = (TextView)findViewById(R.id.myTextView);
-        Button start = (Button)findViewById(R.id.startButton);
-        Button stop  = (Button)findViewById(R.id.stopButton);
+        myTextview = (TextView) findViewById(R.id.myTextView);
+        Button start = (Button) findViewById(R.id.startButton);
+        Button stop = (Button) findViewById(R.id.stopButton);
         myTextview.setText("0");
-        Toast.makeText(getApplicationContext(),"Double click Start button",Toast.LENGTH_LONG).show();
 
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Toast.makeText(v.getContext(), "Click again", Toast.LENGTH_SHORT).show();
                 Intent i = new Intent(v.getContext(), MyService.class);
                 bindService(i, serviceConnection, Context.BIND_AUTO_CREATE);
                 Log.i(TAG, "Start Button CLicked");
@@ -69,26 +65,10 @@ public class MainActivity extends Activity {
                 if (isBound) {
 
                     //Toast.makeText(v.getContext(), myService.getTime(), Toast.LENGTH_LONG).show();
+                    Log.i(TAG,"entered if(isBound) statement");
                     myTextview.setText(String.valueOf(myService.getValue()));
+                    sleeping();
                 }
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while(isBound) {
-                            try {
-                                Thread.sleep(3600000);
-                                if (isBound) {
-                                    myService.start();
-                                    myTextview.setText(String.valueOf(myService.getValue()));
-                                }
-                            } catch (InterruptedException e) {
-                                Log.i(TAG, "main thread stopped");
-                            }
-                        }
-
-                    }
-                }).start();
 
 
             }
@@ -97,26 +77,54 @@ public class MainActivity extends Activity {
         stop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    if(isBound){
+                myTextview.setText("0");
+                Log.i(TAG, "Stop button clicked");
+                try {
+                    if (isBound) {
                         unbindService(serviceConnection);
                         isBound = false;
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.e(TAG,"Error msg caught",e);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error msg caught", e);
                 }
             }
         });
 
 
+    }
+
+    public void sleeping() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isBound) {
+                    try {
+                        Thread.sleep(3600000);
+                        //Thread.sleep(60000);
+                        if (isBound) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    myService.start();
+                                    myTextview.setText(String.valueOf(myService.getValue()));
+                                }
+                            });
+
+                        }
+                    } catch (InterruptedException e) {
+                        Log.i(TAG, "main thread stopped");
+                    }
+                }
+
+            }
+        }).start();
 
 
     }
-
-
-
-
-
 }
+
+
+
+
+
+

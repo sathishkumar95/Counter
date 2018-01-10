@@ -34,21 +34,33 @@ public class MyService extends Service {
             try {
 
                 DateFormat df = new SimpleDateFormat("hh:mm");
-                //Date date1 = df.parse("18:00");
-                //Date date2 = df.parse("19:00");
                 currentTime = Calendar.getInstance().getTime();
                 long diff = currentTime.getTime() - initialTime.getTime();
-                //System.out.println(Long.toString(diff));
+
+
                 long timeInSeconds = diff / 1000;
                 long hours;
                 hours = timeInSeconds / 3600;
-                //System.out.println(Long.toString(hours));
-                if (hours < 1) {
-                    value = 1;
-                }
+                //long diffMinutes = timeInSeconds/60;
+
+
                 double d = (double)hours;
                 d = java.lang.Math.floor(d);
                 value = (int)d;
+
+
+//                  Just for testing purpose
+//                double d = (double)diffMinutes;
+//                d = java.lang.Math.floor(d);
+//                value = (int) d;
+
+                if (hours < 1) {
+                    value = 1;
+                }
+                else {
+                    value = value+1;
+                }
+
                 Log.i(TAG,"Value updated");
 
             } catch (Exception e) {

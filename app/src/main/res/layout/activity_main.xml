@@ -24,16 +24,28 @@
         android:layout_marginEnd="20dp"
         android:layout_marginTop="61dp"
         android:layout_toStartOf="@+id/myTextView"
+        android:background="@color/green"
 
         android:text="Start" />
 
     <Button
         android:id="@+id/stopButton"
+        android:background="@color/red"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/startButton"
         android:layout_marginStart="32dp"
         android:layout_toEndOf="@+id/myTextView"
         android:text="Stop" />
+
+    <TextView
+        android:id="@+id/dummyText"
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/stopButton"
+        android:layout_marginTop="80dp"
+        android:text="Double click start button to start service" />
 
 </RelativeLayout>
